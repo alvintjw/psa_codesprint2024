@@ -3,7 +3,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { MongoClient } from 'mongodb';
 
 // MongoDB connection URI from environment variable
-const uri = process.env.MONGODB_URI as string;
+const uri = process.env.MONGO_URI as string;
 
 // Function to connect to MongoDB
 async function connectToDatabase() {
@@ -17,17 +17,13 @@ export async function POST(req: NextRequest) {
     // Parse the request body to get the teamNumber
     const { teamNumber } = await req.json();
 
-    if (typeof teamNumber !== 'number') {
-      return NextResponse.json({ error: "Invalid team number" }, { status: 400 });
-    }
-
     // Connect to the MongoDB database
     const client = await connectToDatabase();
     const db = client.db('database'); // Use your database name here
     const feedbackCollection = db.collection('Feedback'); // Use your collection name here
 
     // Find feedback items with the matching teamNumber
-    const feedbackItems = await feedbackCollection.find({ teamNumber }).toArray();
+    const feedbackItems = await feedbackCollection.find({ "teamNumber": teamNumber }).toArray();
 
     // Close the client connection
     client.close();

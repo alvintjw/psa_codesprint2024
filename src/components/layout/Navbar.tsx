@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react'
 
 export default function Navbar() {
   const [isManager, setIsManager] = useState(false)
-
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {

@@ -11,8 +11,8 @@
     "migrate:dev": "npx prisma generate dev --name init",
     "start": "next start"
   },
-   "prisma": {
-    "seed": "ts-node prisma/seed.ts" 
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "repository": {
     "type": "github",
@@ -30,6 +30,7 @@
     "@radix-ui/react-menubar": "^1.1.2",
     "@radix-ui/react-navigation-menu": "^1.2.0",
     "@radix-ui/react-radio-group": "^1.2.1",
+    "@radix-ui/react-separator": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
     "atomic-state": "^2.9.94",
     "autoprefixer": "^10.4.20",
@@ -46,7 +47,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.439.0",
     "mongodb": "^6.9.0",
-    "next": "^14.2.9",
+    "next": "^14.2.15",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
     "postcss": "^8.4.45",

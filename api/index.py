@@ -29,90 +29,71 @@ analyzer = Analyzer()
 class FeedbackRequest(BaseModel):
     teamNumber: int
 
-@app.post("/api/getFeedbackSentiment")
-async def get_team_feedback_sentiment(request: FeedbackRequest):
+@app.post("/api/getFeedbackSummary")
+async def get_feedback_summary(request: FeedbackRequest): 
     team_number = request.teamNumber
 
     # Retrieve feedback items for the given teamNumber
     feedback_items = feedback_collection.find({"teamNumber": team_number})
-    print(team_number)
-
-    # Sentiment counters
-    sentiment_counts = {"positive": 0, "negative": 0, "neutral": 0}
-
-    # Check if any feedback items were retrieved
     feedback_list = list(feedback_items)
-    if not feedback_list:
-        return sentiment_counts
 
-    # Analyze sentiment for each feedback item's 'questionOne'
+    # Initialize variables to store concatenated responses and sentiment counts
+    summary = {
+        "overallWorkLifeBalance": [],
+        "teamWorkingRelationship": [],
+        "enjoymentOfWork": [],
+        "collaborationChallenges": [],
+        "workRelatedStressors": []
+    }
+    sentiment_counts = {
+        field: {"positive": 0, "negative": 0, "neutral": 0}
+        for field in summary.keys()
+    }
+
+    # Process each feedback item
     for item in feedback_list:
-        
-        question_one = item.get("overallWorkLifeBalance", "")
-        if not question_one: 
-          continue
-        print(question_one)
+        for field in summary.keys():
+            # Collect responses for the summary
+            if field in item:
+                summary[field].append(item[field])
 
-        # If the text is too long, split into chunks with a max token limit of 512
-        chunks = chunk_text(question_one, 512)
-        positive_count = 0
-        negative_count = 0
-        neutral_count = 0 
+            # Sentiment analysis for the field
+            text = item.get(field, "")
+            if not text:
+                continue
 
-        for chunk in chunks:
-          sentiment_label = analyzer.get_sentiment_score(chunk)
+            chunks = chunk_text(text, 512)
+            positive_count = 0
+            negative_count = 0
+            neutral_count = 0
 
-          # Update sentiment counters
-          if sentiment_label == "positive":
-            positive_count += 1
-          elif sentiment_label == "negative":
-            negative_count += 1
-          else:
-            neutral_count += 1
-        sentiment = find_highest_sentiment(positive_count, negative_count, neutral_count)
+            for chunk in chunks:
+                sentiment_label = analyzer.get_sentiment_score(chunk)
+                if sentiment_label == "positive":
+                    positive_count += 1
+                elif sentiment_label == "negative":
+                    negative_count += 1
+                else:
+                    neutral_count += 1
 
-        sentiment_counts[sentiment] += 1
-    print(sentiment_counts)
-    return sentiment_counts
+            # Update overall sentiment counts for the field
+            sentiment = find_highest_sentiment(positive_count, negative_count, neutral_count)
+            sentiment_counts[field][sentiment] += 1
 
-@app.post("/api/getFeedbackSummary")
-async def get_feedback_summary(request: FeedbackRequest): 
-  team_number = request.teamNumber
-  feedback_items = feedback_collection.find({"teamNumber": team_number})
+    # Join responses for each field for the GPT summary generation
+    concatenated_summary = {
+        key: "\n".join(value) for key, value in summary.items()
+    }
 
-  # Initialize variables to store concatenated responses
-  overall_work_life_balance = []
-  team_working_relationship = []
-  enjoyment_of_work = []
-  collaboration_challenges = []
-  work_related_stressors = []
-  
-  # Loop through each feedback item and concatenate responses
-  for item in feedback_items:
-    if 'overallWorkLifeBalance' in item:
-        overall_work_life_balance.append(item['overallWorkLifeBalance'])
-    if 'teamWorkingRelationship' in item:
-        team_working_relationship.append(item['teamWorkingRelationship'])
-    if 'enjoymentOfWork' in item:
-        enjoyment_of_work.append(item['enjoymentOfWork'])
-    if 'collaborationChallenges' in item:
-        collaboration_challenges.append(item['collaborationChallenges'])
-    if 'workRelatedStressors' in item:
-        work_related_stressors.append(item['workRelatedStressors'])
+    # Generate the manager report with GPT
+    gpt = GPT(openai_api_key=os.getenv("OPENAI_API_KEY"))
+    manager_report = gpt.generate_manager_report(concatenated_summary)
 
-  # Join all responses with a line separator for each field
-  summary = {
-    "overallWorkLifeBalance": "\n".join(overall_work_life_balance),
-    "teamWorkingRelationship": "\n".join(team_working_relationship),
-    "enjoymentOfWork": "\n".join(enjoyment_of_work),
-    "collaborationChallenges": "\n".join(collaboration_challenges),
-    "workRelatedStressors": "\n".join(work_related_stressors),
-  }
-   
-  gpt = GPT(openai_api_key=os.getenv("OPENAI_API_KEY")) 
-  manager_report = gpt.generate_manager_report(summary)
-  print(manager_report)
-  return {"manager_report": manager_report}
+    return {
+        "manager_report": manager_report,
+        "sentiment_counts": sentiment_counts
+    }
+
 
 def chunk_text(text: str, max_tokens: int) -> list:
     """
