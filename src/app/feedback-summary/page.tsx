@@ -1,8 +1,33 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import axios from 'axios'
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+interface FeedbackItem {
+  workSatisfaction?: string;
+  workLifeBalance?: string;
+  workSupport?: string;
+  interDepartmentCommunication?: string;
+  workRecognition?: string;
+  toolsSatisfaction?: string;
+  cultureAlignment?: string;
+  careerGrowthSatisfaction?: string;
+  trainingPreference?: string;
+  developmentOpportunities?: string;
+  learningPreference?: string;
+  weakestSkill?: string;
+  recognitionSatisfaction?: string;
+  feedbackFrequency?: string;
+  recommendCompany?: string;
+  overallWorkLifeBalance?: string;
+  teamWorkingRelationship?: string;
+  enjoymentOfWork?: string;
+  collaborationChallenges?: string;
+  workRelatedStressors?: string;
+  supportWellBeing?: string;
+  improveExperience?: string;
+}
 
 interface ReportData {
   summary_of_report: string;
@@ -14,38 +39,48 @@ interface ReportData {
 }
 
 export default function ReportDisplay() {
-  const [reportData, setReportData] = useState<ReportData | null>(null)
+  const [reportData, setReportData] = useState<ReportData | null>(null);
+  const [feedbackItems, setFeedbackItems] = useState<FeedbackItem[]>([]);
 
   const handleClickSentiment = async () => {
     try {
       const response = await axios.post('/api/getFeedbackSentiment', {
         teamNumber: 1,
-      })
-      console.log('Feedback Sentiment:', response.data)
+      });
+      console.log('Feedback Sentiment:', response.data);
     } catch (error) {
-      console.error('Error fetching feedback summary:', error)
+      console.error('Error fetching feedback summary:', error);
     }
-  }
+  };
 
   const handleClickReport = async () => {
     try {
-      console.log('Button clicked')
       const response = await axios.post('/api/getFeedbackSummary', {
         teamNumber: 1,
-      })
-      console.log(response.data['manager_report']['manager_report'])
-      const report_dict = parseReport(response.data['manager_report']['manager_report'])
-      setReportData(report_dict)
+      });
+      const report_dict = parseReport(response.data['manager_report']['manager_report']);
+      setReportData(report_dict);
     } catch (error) {
-      console.error('Error fetching manager report:', error)
+      console.error('Error fetching manager report:', error);
     }
-  }
+  };
+
+  const fetchAllFeedback = async () => {
+    try {
+      const response = await axios.post('/api/fetchAllFeedback');
+      setFeedbackItems(response.data);
+    } catch (error) {
+      console.error('Error fetching all feedback:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllFeedback();
+  }, []);
 
   function parseReport(jsonString: string): ReportData {
     try {
-      const parsedObject = JSON.parse(jsonString)
-      console.log("Able to parse object")
-      console.log(parsedObject)
+      const parsedObject = JSON.parse(jsonString);
       const keys: (keyof ReportData)[] = [
         "summary_of_report",
         "positive_points_employee_wellbeing",
@@ -53,16 +88,16 @@ export default function ReportDisplay() {
         "positive_points_work_environment",
         "negative_points_work_environment",
         "actionable_suggestions_for_improvement"
-      ]
+      ];
       for (const key of keys) {
         if (!(key in parsedObject)) {
-          throw new Error(`Key "${key}" is missing from the JSON data.`)
+          throw new Error(`Key "${key}" is missing from the JSON data.`);
         }
       }
-      return parsedObject as ReportData
+      return parsedObject as ReportData;
     } catch (error) {
-      console.error("Error parsing JSON string:", error)
-      throw new Error("Invalid JSON format or missing keys.")
+      console.error("Error parsing JSON string:", error);
+      throw new Error("Invalid JSON format or missing keys.");
     }
   }
 
@@ -83,7 +118,7 @@ export default function ReportDisplay() {
         )}
       </CardContent>
     </Card>
-  )
+  );
 
   return (
     <div className="p-4">
@@ -113,6 +148,22 @@ export default function ReportDisplay() {
           {renderCard("Actionable Suggestions for Improvement", reportData.actionable_suggestions_for_improvement)}
         </div>
       )}
+
+      <h2 className="text-2xl font-bold mb-4 mt-8">All Feedback</h2>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+        {feedbackItems.map((item, index) => (
+          <Card key={index} style={{ flex: '0 0 calc(50% - 10px)', padding: '16px', marginBottom: '20px' }}>
+            <CardHeader>
+              <CardTitle>Feedback {index + 1}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p><strong>Work Satisfaction:</strong> {item.workSatisfaction || 'N/A'}</p>
+              <p><strong>Work-Life Balance:</strong> {item.workLifeBalance || 'N/A'}</p>
+              {/* Add other fields here as needed */}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
