@@ -97,25 +97,6 @@ export default function Page() {
           </div>
         </div>
       </section>
-      <section
-        id='open-source'
-        className='container py-8 md:py-12 lg:py-24 mx-auto'
-      >
-        <div className='mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center '>
-          <p className='max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7'>
-            The code is available on{' '}
-            <Link
-              href='https://github.com/danybeltran/nextjs-typescript-and-mongodb'
-              target='_blank'
-              rel='noreferrer'
-              className='underline underline-offset-4'
-            >
-              GitHub
-            </Link>
-            .{' '}
-          </p>
-        </div>
-      </section>
     </>
   )
 }

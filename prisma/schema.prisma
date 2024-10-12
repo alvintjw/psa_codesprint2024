@@ -14,6 +14,7 @@ model User {
   emailVerified  DateTime?
   password       String?
   image          String?
+  teamNumber     Int?
   role           Role      @default(employee)
   department     String?
   existingSkills String[]  @default([])

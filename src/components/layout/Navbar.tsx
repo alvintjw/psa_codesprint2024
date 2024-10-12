@@ -12,7 +12,7 @@ export default function Navbar() {
           <Link className='font-bold text-lg w-16 h-auto' href={'/'}>
             NEXT.JS
           </Link>
-          <Link href='/posts'>Posts</Link>
+          <Link href='/feedback'>Feedback</Link>
           <Link
             href='https://github.com/danybeltran/nextjs-typescript-and-mongodb'
             target='_blank'
