@@ -15,27 +15,35 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Card } from '@/components/ui/card'
-import { PrismaClient } from '@prisma/client'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const FormSchema = z.object({
-  workSatisfaction: z.string(),
-  workLifeBalance: z.string(),
-  workSupport: z.string(),
-  interDepartmentCommunication: z.string(),
-  workRecognition: z.string(),
-  toolsSatisfaction: z.string(),
-  cultureAlignment: z.string(),
-  careerGrowthSatisfaction: z.string(),
-  trainingPreference: z.string(),
-  developmentOpportunities: z.string(),
-  learningPreference: z.string(),
-  weakestSkill: z.string(),
-  recognitionSatisfaction: z.string(),
-  feedbackFrequency: z.string(),
-  recommendCompany: z.string(),
-  other: z.string().optional()
-})
+    workSatisfaction: z.string(),
+    workLifeBalance: z.string(),
+    workSupport: z.string(),
+    interDepartmentCommunication: z.string(),
+    workRecognition: z.string(),
+    toolsSatisfaction: z.string(),
+    cultureAlignment: z.string(),
+    careerGrowthSatisfaction: z.string(),
+    trainingPreference: z.string(),
+    developmentOpportunities: z.string(),
+    learningPreference: z.string(),
+    weakestSkill: z.string(),
+    recognitionSatisfaction: z.string(),
+    feedbackFrequency: z.string(),
+    recommendCompany: z.string(),
+    other: z.string().optional(),
+    overallWorkLifeBalance: z.string().optional(),
+    teamWorkingRelationship: z.string().optional(),
+    enjoymentOfWork: z.string().optional(),
+    collaborationChallenges: z.string().optional(),
+    workRelatedStressors: z.string().optional(),
+    supportWellBeing: z.string().optional(),
+    improveExperience: z.string().optional()
+  })
 
 const questions = [
   {
@@ -209,12 +217,66 @@ const questions = [
   }
 ]
 
-const FeedbackForm = () => {
+const openEndedQuestions = [
+    {
+      name: 'overallWorkLifeBalance',
+      label: 'How do you feel about the overall balance between your work responsibilities and personal life?'
+    },
+    {
+      name: 'teamWorkingRelationship',
+      label: 'How would you describe your working relationship with your teammates?'
+    },
+    {
+      name: 'enjoymentOfWork',
+      label: 'What do you enjoy most about working here right now, and why?'
+    },
+    {
+      name: 'collaborationChallenges',
+      label: 'Are there any challenges you face when collaborating with your teammates? If so, please elaborate.'
+    },
+    {
+      name: 'workRelatedStressors',
+      label: 'Are there any specific work-related stressors that negatively impact your well-being? If so, please elaborate.'
+    },
+    {
+      name: 'supportWellBeing', 
+      label: 'What can the company or your manager do to better support your well-being?'
+    },
+    {
+      name: 'improveExperience',  
+      label: 'Are there any changes or resources that would help to improve your working experience?'
+    }
+  ]
+  
+  
+
+  const FeedbackForm = () => {
     const { data: session, status } = useSession()
+    const router = useRouter()
+    const [user, setUser] = useState<any>(null)
   
     const form = useForm<z.infer<typeof FormSchema>>({
       resolver: zodResolver(FormSchema)
     })
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('/api/getUser')
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data')
+          }
+          const { user } = await response.json()
+          setUser(user)
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        }
+      }
+  
+      if (status === 'authenticated') {
+        fetchUserData()
+      }
+    }, [status])
   
     if (status === 'loading') {
       return <p>Loading...</p>
@@ -225,35 +287,36 @@ const FeedbackForm = () => {
     }
   
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        try {
-          const userEmail = session?.user?.email
-          if (!userEmail) {
-            throw new Error('User email is not available')
-          }
-      
-          const feedbackData = {
-            ...data,
-            userId: session?.user?.id
-          }
-      
-          const response = await fetch('/api/addFeedback', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(feedbackData)
-          })
-      
-          if (!response.ok) {
-            throw new Error('Error saving feedback')
-          }
-      
-          console.log('Feedback saved successfully')
-        } catch (error) {
-          console.error('Error submitting feedback:', error)
+      try {
+        if (!user) {
+          throw new Error('User data is not available')
         }
+  
+        const feedbackData = {
+          ...data,
+          userId: user.id,
+          teamNumber: user.teamNumber
+        }
+  
+        const response = await fetch('/api/addFeedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(feedbackData)
+        })
+  
+        if (!response.ok) {
+          throw new Error('Error saving feedback')
+        }
+  
+        console.log('Feedback saved successfully')
+        router.push('/') // Redirect after submission
+  
+      } catch (error) {
+        console.error('Error submitting feedback:', error)
       }
-      
+    }
   
     return (
       <div className='flex flex-col items-center justify-center w-full h-auto mt-4 pb-6 space-y-6'>
@@ -279,6 +342,24 @@ const FeedbackForm = () => {
                             </label>
                           ))}
                         </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Card>
+            ))}
+  
+            {openEndedQuestions.map(question => (
+              <Card key={question.name} className='p-5'>
+                <FormField
+                  control={form.control}
+                  name={question.name as keyof z.infer<typeof FormSchema>}
+                  render={({ field }) => (
+                    <FormItem className='space-y-3'>
+                      <FormLabel>{question.label}</FormLabel>
+                      <FormControl>
+                        <textarea {...field} className="textarea w-full p-2" placeholder="Type your answer here..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
