@@ -34,12 +34,15 @@ export default function Navbar() {
       <div className='max-w-screen-2xl mx-auto flex items-center justify-between py-2 px-6 md:px-8'>
         <div className='space-x-3'>
           <Link className='font-bold text-lg w-16 h-auto' href={'/'}>
-            NEXT.JS
+            PSAPortal
           </Link>
+
+          <Link href='upskill'>Upskill</Link>
           <Link href='/feedback'>Give Feedback</Link>
           {isManager && (
             <Link href='/team-sentiment'>Team Sentiment</Link>
           )}
+
         </div>
 
         <div className='flex items-center gap-x-2'>
