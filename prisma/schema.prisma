@@ -89,3 +89,16 @@ model Feedback {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
+
+model Course {
+  id          String   @id @default(cuid()) @map("_id")
+  name        String
+  instructor  String
+  cover       String // YouTube thumbnail or course image URL
+  youtubeLink String // Link to the YouTube video
+  description String?
+  category    String? // Optional field for categorizing courses (e.g., Web Development)
+  duration    Int? // Duration in minutes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
