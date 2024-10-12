@@ -1,12 +1,15 @@
 /**
  * @type { import("next").NextConfig }
  */
-module.exports = {
-  reactStrictMode: false
-}
-
-module.exports = {
-  reactStrictMode: true,
+// module.exports = {
+//   reactStrictMode: false
+// }
+// next.config.js
+/**
+ * @type { import("next").NextConfig }
+ */
+const nextConfig = {
+  reactStrictMode: true,  // Keep this from both branches
   images: {
     remotePatterns: [
       {
@@ -21,4 +24,6 @@ module.exports = {
       }
     ]
   }
-}
+};
+
+module.exports = nextConfig;

@@ -19,6 +19,8 @@ next-env.d.ts
 *.pem
 .env
 yarn.lock
+venv/
+
 
 # debug
 npm-debug.log*
