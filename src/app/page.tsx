@@ -1,102 +1,79 @@
-import Link from 'next/link'
-import { GoPlus } from 'react-icons/go'
-import { FaReact } from 'react-icons/fa'
-import { BiLogoMongodb } from 'react-icons/bi'
-import { TbBrandNextjs } from 'react-icons/tb'
-import { SiPrisma, SiTailwindcss } from 'react-icons/si'
-import { IoLogoGithub, IoLogoVercel } from 'react-icons/io5'
+'use client'
 
+import { useTypewriter, Cursor } from 'react-simple-typewriter'
+import MaxWidthWrapper from '@/components/max-width-wrapper'
 import { Button } from '@/components/ui/button'
 
 export default function Page() {
+  const [text] = useTypewriter({
+    words: ['People', 'Innovation', 'Excellence'],
+    loop: true,
+    delaySpeed: 2000
+  })
+
   return (
     <>
-      <section className='space-y-6 pb-8 py-8 md:py-16 lg:py-20 '>
-        <div className='container flex max-w-[64rem] flex-col items-center gap-4 text-center mx-auto'>
-          <h1 className='font-bold leading-normal text-3xl sm:text-5xl md:text-6xl lg:text-7xl'>
-            Hello world
-          </h1>
-          <p>This is a starter project</p>
-          <div className='flex gap-x-2 *:*:gap-x-2'>
-            <Link
-              href='https://github.com/danybeltran/nextjs-typescript-and-mongodb'
-              target='_blank'
-              rel='noreferrer'
+      <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center'>
+        <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50 '>
+          <p className='text-sm animate-in font-semibold text-gray-700'>
+            PSAPortal is public!
+          </p>
+        </div>
+        <h1 className='max-w-4xl text-5xl font-bold md:text-5xl lg:text-6xl mb-3'>
+          <div style={{ display: 'inline-flex', alignItems: 'center' }}>
+            <div style={{ display: 'inline-block' }}>Putting</div>
+            <div
+              className='inline-flex items-center justify-center text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-blue-500'
+              style={{
+                height: '95px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
             >
-              <Button variant='outline'>
-                <IoLogoGithub />
-                GitHub
-              </Button>
-            </Link>
-            <Link
-              target='_blank'
-              href='https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdanybeltran%2Fnextjs-typescript-and-mongodb'
-            >
-              <Button>
-                <IoLogoVercel /> Deploy
-              </Button>
-            </Link>
+              &nbsp;{text}
+              <Cursor cursorStyle='|' />
+            </div>
+          </div>
+          <div>at the Heart of PSA</div>
+        </h1>
+        <p className='mt-5 max-w-prose text-zinc-500 dark:text-white sm:text-lg'>
+          PSAPortal is designed to empower employees by fostering continuous
+          learning and skill development. The portal promotes talent development
+          and caters to a multi-generational workforce, all the while enhancing
+          engagement through personalized growth opportunities.
+        </p>
+      </MaxWidthWrapper>
+
+      <div>
+        <div className='relative isolate'>
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-x-0 -top-60 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-100'
+          >
+            <div
+              style={{
+                clipPath:
+                  'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)'
+              }}
+              className='relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-y-20 rotate-[30deg] bg-gradient-to-tr from-[#0090F1] to-[#00CBD0] opacity-30 sm:left-[calc(50%-13rem)] sm:w-[72.1875rem]'
+            />
+          </div>
+
+          <div
+            aria-hidden='true'
+            className='pointer-events-none absolute inset-x-0 -top-80 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-120'
+          >
+            <div
+              style={{
+                clipPath:
+                  'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)'
+              }}
+              className='relative left-[calc(50%-13rem)] aspect-[1155/678] w-[36.125rem] -translate-y-32 rotate-[30deg] bg-gradient-to-tr from-[#B1FF20] to-[#33D600] opacity-30 sm:left-[calc(50%-36rem)] sm:w-[72.1875rem]'
+            />
           </div>
         </div>
-      </section>
-      <section
-        id='features'
-        className='container space-y-6 py-8 dark:bg-transparent md:py-12 lg:py-24 mx-auto'
-      >
-        <div className='mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center'>
-          <h2 className='font-bold text-2xl leading-[1.1] sm:text-2xl md:text-4xl'>
-            Features
-          </h2>
-        </div>
-        <div className='mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3'>
-          <div className='relative overflow-hidden rounded-lg border bg-background p-2 text-center'>
-            <div className='flex h-[180px] flex-col justify-center gap-y-4 items-center rounded-md p-6'>
-              <TbBrandNextjs size={40} />
-              <div className='space-y-2'>
-                <h3 className='font-bold leading-normal'>Next.js 14</h3>
-                <p className='text-sm text-muted-foreground'>App dir</p>
-              </div>
-            </div>
-          </div>
-          <div className='relative overflow-hidden rounded-lg border bg-background p-2 text-center'>
-            <div className='flex h-[180px] flex-col justify-center gap-y-4 items-center rounded-md p-6'>
-              <FaReact size={40} />
-              <div className='space-y-2'>
-                <h3 className='font-bold leading-normal'>React 18</h3>
-                <p className='text-sm text-muted-foreground'>
-                  Server and Client Components.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className='relative overflow-hidden rounded-lg border bg-background p-2 text-center'>
-            <div className='flex h-[180px] flex-col justify-center gap-y-4 items-center rounded-md p-6'>
-              <div className='flex items-center justify-center gap-x-3'>
-                <SiPrisma size={40} />
-                <GoPlus size={20} />
-                <BiLogoMongodb size={40} />
-              </div>
-              <div className='space-y-2'>
-                <h3 className='font-bold leading-normal'>Database</h3>
-                <p className='text-sm text-muted-foreground'>
-                  Prisma + MongoDB
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className='relative overflow-hidden rounded-lg border bg-background p-2 text-center'>
-            <div className='flex h-[180px] flex-col justify-center gap-y-4 items-center rounded-md p-6'>
-              <SiTailwindcss size={40} />
-              <div className='space-y-2'>
-                <h3 className='font-bold leading-normal'>ShadCN</h3>
-                <p className='text-sm text-muted-foreground'>
-                  UI components built with TailwindCSS and Radix UI
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     </>
   )
 }
