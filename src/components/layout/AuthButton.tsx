@@ -56,6 +56,9 @@ export default function AuthButton() {
           {data?.user?.name} {isManager ? ' (Manager)' : ''}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem>
+          <Link href='profile'>Profile</Link>
+        </DropdownMenuItem>
         {isManager && (
           <DropdownMenuItem>
             <Link href='/team-sentiment'>View Team Sentiment</Link>

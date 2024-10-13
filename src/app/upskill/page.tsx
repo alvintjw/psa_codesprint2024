@@ -68,11 +68,23 @@ export default function CoursePage() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        console.log('The user is', user.name)
-        const response = await axios.get('/api/getFakeRecommendations')
-        if (response && response.data) {
-          console.log('response.data:', response.data)
-          setMadeForYouCourses(response.data.recommendations) // Set courses data from the fake response
+        const skillsString = user.existingSkills.join(', ')
+        const keywords = `${user.department}, ${skillsString}`
+        console.log('keywords:', keywords)
+
+        // Call the getRecommendations API route with POST method
+        const response = await fetch('/api/getRecommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ keywords }) // Send the keywords as the body
+        })
+
+        const responseData = await response.json()
+        if (responseData) {
+          console.log('responseData:', responseData)
+          setMadeForYouCourses(responseData.recommendations) // Set courses data from the fake response
         } else {
           throw new Error('Failed to fetch courses')
         }
