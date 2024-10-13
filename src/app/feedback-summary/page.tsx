@@ -281,8 +281,9 @@ export default function ReportDisplay() {
 
       <h2 className="text-3xl font-bold mb-6 text-center">All Feedback</h2>
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
+        <div className="flex flex-col justify-center items-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="mt-4 text-muted-foreground">Retrieving employee feedback...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
