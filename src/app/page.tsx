@@ -13,6 +13,32 @@ export default function Page() {
 
   return (
     <>
+      <div className='relative'>
+        {/* Telegram button with chat bubble */}
+        <div className="absolute top-2 right-2 flex items-center space-x-3">
+          <div className="bg-white text-gray-700 text-sm p-3 rounded-lg shadow-xl">
+            Try our telegram chatbot to match with mentors!
+          </div>
+
+          <a
+            href='https://t.me/psa_mentormatching_bot'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='flex items-center justify-center w-12 h-12 bg-blue-500 rounded-full shadow-lg hover:bg-blue-600 transition-colors duration-300'
+            title='Chat with our bot'
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 240 240'
+              fill='white'
+              className='w-10 h-10'
+            >
+              <path d='M120 0C53.66 0 0 53.66 0 120s53.66 120 120 120 120-53.66 120-120S186.34 0 120 0zm58.2 82.25l-19.34 91.2c-1.45 6.57-5.34 8.2-10.8 5.11l-29.88-22.06-14.42 13.88c-1.59 1.59-2.91 2.91-5.94 2.91l2.12-30.03 54.69-49.53c2.37-2.37-.51-3.68-3.67-1.31l-67.47 42.53-29.08-9.09c-6.32-2.02-6.57-6.31 1.37-9.34l113.69-43.88c5.28-2.02 9.97 1.31 8.29 9.19z' />
+            </svg>
+          </a>
+        </div>
+      </div>
+
       <MaxWidthWrapper className='mb-12 mt-28 sm:mt-40 flex flex-col items-center justify-center text-center'>
         <div className='mx-auto mb-4 flex max-w-fit items-center justify-center space-x-2 overflow-hidden rounded-full border border-gray-200 bg-white px-7 py-2 shadow-md backdrop-blur transition-all hover:border-gray-300 hover:bg-white/50 '>
           <p className='text-sm animate-in font-semibold text-gray-700'>

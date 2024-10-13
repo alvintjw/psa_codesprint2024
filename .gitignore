@@ -20,6 +20,7 @@ next-env.d.ts
 .env
 yarn.lock
 venv/
+telegramBot/bot/venv/
 
 
 # debug

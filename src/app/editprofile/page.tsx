@@ -34,7 +34,10 @@ const availableSkills = [
   'SQL',
   'AWS',
   'Data Analysis',
-  'Project Management'
+  'Project Management',
+  'Environmental Management',
+  'Stakeholder Management',
+  'Customer Service'
 ]
 
 const EditProfile = () => {

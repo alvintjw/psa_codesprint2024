@@ -22,6 +22,7 @@ import { PodcastEmptyPlaceholder } from './components/podcast-empty-placeholder'
 import { Sidebar } from './components/sidebar'
 import { listenNowAlbums, madeForYouAlbums } from './data/albums'
 import { playlists } from './data/playlists'
+import { Loader2 } from 'lucide-react'
 
 // API data interface
 // Define the Course type based on the new response structure
@@ -42,8 +43,7 @@ export default function CoursePage() {
   const [madeForYouCourses, setMadeForYouCourses] = useState<Course[]>([])
   const [listenNowCourses, setListenNowCourses] = useState<Course[]>([])
 
-  const userId = 'cm25orh2w00002ds4tilm02w6' //hardcoded for now
-  // Fetch user data once authenticated
+  const userId = 'cm25orh2w00002ds4tilm02w6'
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -101,33 +101,25 @@ export default function CoursePage() {
     }
   }, [user]) // Only run this effect when user is set
 
-  if (loading) return <div>Loading Courses for {user?.userId}...</div>
+  if (loading)
+    return (
+      <div className='flex flex-col justify-center items-center h-64'>
+        <Loader2 className='h-8 w-8 animate-spin text-primary' />
+        <p className='mt-4 text-muted-foreground'>
+          Getting recommendations...
+        </p>
+      </div>
+    )
   if (error) return <div>{error}</div>
 
   return (
     <>
-      <div className='md:hidden'>
-        <Image
-          src='/examples/music-light.png'
-          width={1280}
-          height={1114}
-          alt='Music'
-          className='w-full h-auto'
-        />
-        <Image
-          src='/examples/music-dark.png'
-          width={1280}
-          height={1114}
-          alt='Music'
-          className='hidden dark:block'
-        />
-      </div>
-      <div className='hidden md:block'>
+      <div className='block'>
         <Menu />
         <div className='border-t'>
           <div className='bg-background'>
             <div className='grid lg:grid-cols-5'>
-              <div className='col-span-3 lg:col-span-4 lg:border-l'>
+              <div className='col-span-3 lg:col-span-5 lg:border-l'>
                 <div className='h-full px-4 py-6 lg:px-8'>
                   <Tabs defaultValue='music' className='h-full space-y-6'>
                     <div className='space-between flex items-center'>
@@ -193,7 +185,6 @@ export default function CoursePage() {
                           </div>
                           <ScrollBar orientation='horizontal' />
                         </ScrollArea>
-
                       </div>
                       <div className='mt-6 space-y-1'>
                         <h2 className='text-2xl font-semibold tracking-tight'>
