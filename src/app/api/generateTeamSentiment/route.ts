@@ -71,7 +71,8 @@ async function generateKPIReport(feedbackData: any[]) {
   Here is the feedback:
   ${feedbackSummary}
 
-  Please return **only** valid JSON, without any additional text or explanation. The JSON object should contain the KPI metrics with corresponding values.
+  Please return **only** valid JSON, without any additional text or explanation. The JSON object should contain the KPI metrics with corresponding values in the following format: 
+  { "AverageWorkSatisfaction": 3, "AverageWorkLifeBalance": 3, "PercentageOfEmployeesReportingWorkRelatedStress": 37.5, "CommonWeakSkillsReportedByEmployees": [ "Technical skills", "Leadership skills", "Problem-solving skills", "Time management skills", "Communication skills" ], "NetPromoterScore": 0, "PositiveSentimentPercentage": 37.5, "NegativeSentimentPercentage": 62.5, "BreakdownOfTrainingPreferences": { "TechnicalSkills": 25, "LeadershipAndManagement": 12.5, "CommunicationAndTeamwork": 12.5, "TimeManagement": 37.5, "ProblemSolvingAndCriticalThinking": 12.5 }, "SuggestionsForAreasOfImprovement": [ "Increase recognition programs", "Enhance collaboration within teams", "Provide more development opportunities", "Address work-life balance concerns", "Improve communication channels" ] }
   `;
 
   try {
@@ -90,10 +91,15 @@ async function generateKPIReport(feedbackData: any[]) {
 }
 
 // Handle GET requests
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    // Fetch all feedback data from the database
-    const feedbackData = await prisma.feedback.findMany();
+    const { teamNumber } = await req.json();    // Fetch all feedback data from the database
+
+    const feedbackData = await prisma.feedback.findMany({
+      where: {
+        teamNumber: teamNumber,
+      },
+    });
 
     // Prepare data by converting necessary fields to numerical values for KPI generation
     const preparedFeedbackData = feedbackData.map(feedback => ({
