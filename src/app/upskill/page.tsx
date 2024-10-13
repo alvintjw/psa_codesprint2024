@@ -165,28 +165,35 @@ export default function CoursePage() {
                       <div className='relative'>
                         <ScrollArea>
                           <div className='flex space-x-4 pb-4'>
-                            {madeForYouCourses.map(course => (
+                            {(madeForYouCourses || []).map(course => (
                               <div
                                 key={course.course_id}
-                                className='w-[250px] p-4 border rounded-md'
+                                className='w-[250px] p-4 border rounded-md relative bg-cover bg-center'
                               >
+                                {/* Play Button Image */}
+                                <div className='flex justify-center mb-2'>
+                                  <Image
+                                    src='/youtube.png'
+                                    alt='Play Button'
+                                    width={200} // Adjust size as needed
+                                    height={150}
+                                    className='opacity-70' // Optional opacity for effect
+                                  />
+                                </div>
+
+                                {/* Course Details */}
                                 <h3 className='text-lg font-bold'>
                                   {course.course_title}
                                 </h3>
-                                <p className='text-sm text-muted-foreground'>
-                                  Organisation: {course.course_organisation}
-                                </p>
                                 <p className='text-sm'>
                                   Difficulty: {course.course_difficulty}
-                                </p>
-                                <p className='text-sm'>
-                                  Rating: {course.course_rating}
                                 </p>
                               </div>
                             ))}
                           </div>
                           <ScrollBar orientation='horizontal' />
                         </ScrollArea>
+
                       </div>
                       <div className='mt-6 space-y-1'>
                         <h2 className='text-2xl font-semibold tracking-tight'>
