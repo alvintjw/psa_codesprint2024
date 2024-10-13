@@ -22,6 +22,8 @@ model User {
   updatedAt      DateTime  @updatedAt
   accounts       Account[]
   sessions       Session[]
+
+  Feedback Feedback[]
 }
 
 enum Role {
@@ -63,4 +65,47 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Feedback {
+  id                           String   @id @default(cuid()) @map("_id")
+  createdAt                    DateTime @default(now())
+  workSatisfaction             String?
+  workLifeBalance              String?
+  workSupport                  String?
+  interDepartmentCommunication String?
+  workRecognition              String?
+  toolsSatisfaction            String?
+  cultureAlignment             String?
+  careerGrowthSatisfaction     String?
+  trainingPreference           String?
+  developmentOpportunities     String?
+  learningPreference           String?
+  weakestSkill                 String?
+  recognitionSatisfaction      String?
+  feedbackFrequency            String?
+  recommendCompany             String?
+  overallWorkLifeBalance       String?
+  teamWorkingRelationship      String?
+  enjoymentOfWork              String?
+  collaborationChallenges      String?
+  workRelatedStressors         String?
+  supportWellBeing             String?
+  improveExperience            String?
+  teamNumber     Int?
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Course {
+  id                      String   @id @default(cuid()) @map("_id")
+  title                   String
+  certificateType         String
+  rating                  Float
+  difficulty              String
+  studentsEnrolled        Float
+  overallRating           Float
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 }

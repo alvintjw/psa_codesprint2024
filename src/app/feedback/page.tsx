@@ -15,173 +15,35 @@ import {
 } from '@/components/ui/form'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Card } from '@/components/ui/card'
+import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 
 const FormSchema = z.object({
-  workSatisfaction: z.enum(
-    [
-      'Very satisfied',
-      'Satisfied',
-      'Neutral',
-      'Dissatisfied',
-      'Very dissatisfied'
-    ],
-    {
-      required_error: 'Please select an option for work satisfaction.'
-    }
-  ),
-  workLifeBalance: z.enum(
-    [
-      'Very well balanced',
-      'Mostly balanced',
-      'Neutral',
-      'Not very balanced',
-      'Poorly balanced'
-    ],
-    {
-      required_error: 'Please select an option for work-life balance.'
-    }
-  ),
-  workSupport: z.enum(
-    [
-      'Very well supported',
-      'Supported',
-      'Neutral',
-      'Not very supported',
-      'Not supported at all'
-    ],
-    {
-      required_error: 'Please select an option for work support.'
-    }
-  ),
-  interDepartmentCommunication: z.enum(
-    [
-      'Very effective',
-      'Effective',
-      'Neutral',
-      'Ineffective',
-      'Very ineffective'
-    ],
-    {
-      required_error:
-        'Please select an option for inter-department communication.'
-    }
-  ),
-  workRecognition: z.enum(
-    [
-      'Extremely valued',
-      'Valued',
-      'Neutral',
-      'Not very valued',
-      'Not valued at all'
-    ],
-    {
-      required_error: 'Please select an option for work recognition.'
-    }
-  ),
-  toolsSatisfaction: z.enum(
-    [
-      'Very satisfied',
-      'Satisfied',
-      'Neutral',
-      'Dissatisfied',
-      'Very dissatisfied'
-    ],
-    {
-      required_error:
-        'Please select an option for tools and resources satisfaction.'
-    }
-  ),
-  cultureAlignment: z.enum(
-    [
-      'Very well aligned',
-      'Somewhat aligned',
-      'Neutral',
-      'Not aligned',
-      'Completely misaligned'
-    ],
-    {
-      required_error: 'Please select an option for culture alignment.'
-    }
-  ),
-  careerGrowthSatisfaction: z.enum(
-    [
-      'Very satisfied',
-      'Satisfied',
-      'Neutral',
-      'Dissatisfied',
-      'Very dissatisfied'
-    ],
-    {
-      required_error: 'Please select an option for career growth satisfaction.'
-    }
-  ),
-  trainingPreference: z.enum(
-    [
-      'Technical skills',
-      'Leadership and management',
-      'Communication and teamwork',
-      'Time management',
-      'Problem-solving and critical thinking'
-    ],
-    {
-      required_error: 'Please select an option for training preference.'
-    }
-  ),
-  developmentOpportunities: z.enum(
-    ['Very often', 'Occasionally', 'Rarely', 'Never'],
-    {
-      required_error: 'Please select an option for development opportunities.'
-    }
-  ),
-  learningPreference: z.enum(
-    [
-      'Hands-on training/workshops',
-      'Online courses',
-      'Reading materials',
-      'Learning from colleagues/mentors',
-      'Self-paced study'
-    ],
-    {
-      required_error: 'Please select an option for learning preference.'
-    }
-  ),
-  weakestSkill: z.enum(
-    [
-      'Technical skills',
-      'Leadership skills',
-      'Communication skills',
-      'Problem-solving skills',
-      'Time management skills'
-    ],
-    {
-      required_error: 'Please select an option for weakest skill.'
-    }
-  ),
-  recognitionSatisfaction: z.enum(
-    [
-      'Very satisfied',
-      'Satisfied',
-      'Neutral',
-      'Dissatisfied',
-      'Very dissatisfied'
-    ],
-    {
-      required_error: 'Please select an option for recognition satisfaction.'
-    }
-  ),
-  feedbackFrequency: z.enum(
-    ['Weekly', 'Monthly', 'Quarterly', 'Annually', 'Only when necessary'],
-    {
-      required_error: 'Please select an option for feedback frequency.'
-    }
-  ),
-  recommendCompany: z.enum(
-    ['Extremely likely', 'Likely', 'Neutral', 'Unlikely', 'Extremely unlikely'],
-    {
-      required_error: 'Please select an option for recommending the company.'
-    }
-  )
-})
+    workSatisfaction: z.string(),
+    workLifeBalance: z.string(),
+    workSupport: z.string(),
+    interDepartmentCommunication: z.string(),
+    workRecognition: z.string(),
+    toolsSatisfaction: z.string(),
+    cultureAlignment: z.string(),
+    careerGrowthSatisfaction: z.string(),
+    trainingPreference: z.string(),
+    developmentOpportunities: z.string(),
+    learningPreference: z.string(),
+    weakestSkill: z.string(),
+    recognitionSatisfaction: z.string(),
+    feedbackFrequency: z.string(),
+    recommendCompany: z.string(),
+    other: z.string().optional(),
+    overallWorkLifeBalance: z.string().optional(),
+    teamWorkingRelationship: z.string().optional(),
+    enjoymentOfWork: z.string().optional(),
+    collaborationChallenges: z.string().optional(),
+    workRelatedStressors: z.string().optional(),
+    supportWellBeing: z.string().optional(),
+    improveExperience: z.string().optional()
+  })
 
 const questions = [
   {
@@ -355,64 +217,168 @@ const questions = [
   }
 ]
 
-const FeedbackForm = () => {
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema)
-  })
+const openEndedQuestions = [
+    {
+      name: 'overallWorkLifeBalance',
+      label: 'How do you feel about the overall balance between your work responsibilities and personal life?'
+    },
+    {
+      name: 'teamWorkingRelationship',
+      label: 'How would you describe your working relationship with your teammates?'
+    },
+    {
+      name: 'enjoymentOfWork',
+      label: 'What do you enjoy most about working here right now, and why?'
+    },
+    {
+      name: 'collaborationChallenges',
+      label: 'Are there any challenges you face when collaborating with your teammates? If so, please elaborate.'
+    },
+    {
+      name: 'workRelatedStressors',
+      label: 'Are there any specific work-related stressors that negatively impact your well-being? If so, please elaborate.'
+    },
+    {
+      name: 'supportWellBeing', 
+      label: 'What can the company or your manager do to better support your well-being?'
+    },
+    {
+      name: 'improveExperience',  
+      label: 'Are there any changes or resources that would help to improve your working experience?'
+    }
+  ]
+  
+  
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(
-      'You submitted the following values:' + JSON.stringify(data, null, 2)
+  const FeedbackForm = () => {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+    const [user, setUser] = useState<any>(null)
+  
+    const form = useForm<z.infer<typeof FormSchema>>({
+      resolver: zodResolver(FormSchema)
+    })
+  
+    useEffect(() => {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch('/api/getUser')
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data')
+          }
+          const { user } = await response.json()
+          setUser(user)
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        }
+      }
+  
+      if (status === 'authenticated') {
+        fetchUserData()
+      }
+    }, [status])
+  
+    if (status === 'loading') {
+      return <p>Loading...</p>
+    }
+  
+    if (status === 'unauthenticated' || !session) {
+      return <p>You need to be logged in to provide feedback</p>
+    }
+  
+    async function onSubmit(data: z.infer<typeof FormSchema>) {
+      try {
+        if (!user) {
+          throw new Error('User data is not available')
+        }
+  
+        const feedbackData = {
+          ...data,
+          userId: user.id,
+          teamNumber: user.teamNumber
+        }
+  
+        const response = await fetch('/api/addFeedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(feedbackData)
+        })
+  
+        if (!response.ok) {
+          throw new Error('Error saving feedback')
+        }
+  
+        console.log('Feedback saved successfully')
+        router.push('/') // Redirect after submission
+  
+      } catch (error) {
+        console.error('Error submitting feedback:', error)
+      }
+    }
+  
+    return (
+      <div className='flex flex-col items-center justify-center w-full h-auto mt-4 pb-6 space-y-6'>
+        <h3 className='scroll-m-20 text-2xl font-semibold tracking-tight'>Share your thoughts with us!</h3>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className='lg:w-2/3 space-y-3 w-full'>
+            {questions.map(question => (
+              <Card key={question.name} className='p-5'>
+                <FormField
+                  control={form.control}
+                  name={question.name as keyof z.infer<typeof FormSchema>}
+                  render={({ field }) => (
+                    <FormItem className='space-y-3'>
+                      <FormLabel>{question.label}</FormLabel>
+                      <FormControl>
+                        <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className='flex flex-col space-y-1'>
+                          {question.options.map(option => (
+                            <label key={option} className='flex items-center space-x-3 cursor-pointer hover:text-blue-700'>
+                              <FormControl>
+                                <RadioGroupItem value={option} />
+                              </FormControl>
+                              <span className='font-normal'>{option}</span>
+                            </label>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Card>
+            ))}
+  
+            {openEndedQuestions.map(question => (
+              <Card key={question.name} className='p-5'>
+                <FormField
+                  control={form.control}
+                  name={question.name as keyof z.infer<typeof FormSchema>}
+                  render={({ field }) => (
+                    <FormItem className='space-y-3'>
+                      <FormLabel>{question.label}</FormLabel>
+                      <FormControl>
+                        <textarea {...field} className="textarea w-full p-2" placeholder="Type your answer here..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </Card>
+            ))}
+  
+            {Object.keys(form.formState.errors).length > 0 && (
+              <p className='text-red-500 font-medium'>Please answer all required questions before submitting.</p>
+            )}
+  
+            <Button type='submit' className='mb-6'>
+              Submit Feedback
+            </Button>
+          </form>
+        </Form>
+      </div>
     )
   }
-
-  return (
-    <div className='flex flex-col justify-between mt-4 pb-6 h-screen w-full items-center'>
-      <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className='w-2/3 space-y-3'
-        >
-          {questions.map(question => (
-            <Card key={question.name} className='p-5'>
-              <FormField
-                control={form.control}
-                name={question.name as keyof z.infer<typeof FormSchema>}
-                render={({ field }) => (
-                  <FormItem className='space-y-3'>
-                    <FormLabel>{question.label}</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className='flex flex-col space-y-1'
-                      >
-                        {question.options.map(option => (
-                          <FormItem
-                            key={option}
-                            className='flex items-center space-x-3'
-                          >
-                            <FormControl>
-                              <RadioGroupItem value={option} />
-                            </FormControl>
-                            <FormLabel className='font-normal'>
-                              {option}
-                            </FormLabel>
-                          </FormItem>
-                        ))}
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </Card>
-          ))}
-          <Button type='submit' className='mb-3'>Submit Feedback</Button>
-        </form>
-      </Form>
-    </div>
-  )
-}
-
-export default FeedbackForm
+  
+  export default FeedbackForm
