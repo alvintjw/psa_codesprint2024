@@ -15,9 +15,8 @@ export default function Navbar() {
             PSAPortal
           </Link>
 
-          <Link href='upskill'>Upskill</Link>
+          <Link href='/upskill'>Upskill</Link>
           <Link href='/feedback'>Give Feedback</Link>
-          
 
         </div>
 
