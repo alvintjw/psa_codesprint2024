@@ -11,8 +11,8 @@
     "migrate:dev": "npx prisma generate dev --name init",
     "start": "next start"
   },
-   "prisma": {
-    "seed": "ts-node prisma/seed.ts" 
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   },
   "repository": {
     "type": "github",
@@ -46,7 +46,7 @@
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.439.0",
     "mongodb": "^6.9.0",
-    "next": "^14.2.9",
+    "next": "^14.2.15",
     "next-auth": "^4.24.7",
     "next-themes": "^0.3.0",
     "postcss": "^8.4.45",

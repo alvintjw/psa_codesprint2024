@@ -37,12 +37,9 @@ export default function Navbar() {
             PSAPortal
           </Link>
 
-          <Link href='upskill'>Upskill</Link>
+          <Link href='/upskill'>Upskill</Link>
           <Link href='/feedback'>Give Feedback</Link>
-          {isManager && (
-            <Link href='/team-sentiment'>Team Sentiment</Link>
-          )}
-
+          {isManager && <Link href='/team-sentiment'>Team Sentiment</Link>}
         </div>
 
         <div className='flex items-center gap-x-2'>

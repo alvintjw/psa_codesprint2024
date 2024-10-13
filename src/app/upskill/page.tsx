@@ -1,6 +1,10 @@
-import { Metadata } from 'next'
+'use client'
+
 import Image from 'next/image'
 import { PlusCircledIcon } from '@radix-ui/react-icons'
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
 
 import { Button } from '@/registry/new-york/ui/button'
 import { ScrollArea, ScrollBar } from '@/registry/new-york/ui/scroll-area'
@@ -19,12 +23,75 @@ import { Sidebar } from './components/sidebar'
 import { listenNowAlbums, madeForYouAlbums } from './data/albums'
 import { playlists } from './data/playlists'
 
-export const metadata: Metadata = {
-  title: 'UpSkill Courses',
-  description: 'Example music app using the components.'
+// API data interface
+// Define the Course type based on the new response structure
+interface Course {
+  course_id: number
+  course_organisation: string
+  course_title: string
+  course_certificate_type: string
+  course_rating: number
+  course_difficulty: string
 }
 
-export default function MusicPage() {
+export default function CoursePage() {
+  const { data: session, status } = useSession()
+  const [user, setUser] = useState<any | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [madeForYouCourses, setMadeForYouCourses] = useState<Course[]>([])
+  const [listenNowCourses, setListenNowCourses] = useState<Course[]>([])
+
+  const userId = 'cm25orh2w00002ds4tilm02w6' //hardcoded for now
+  // Fetch user data once authenticated
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('/api/getUser')
+        if (!response.ok) {
+          throw new Error('Failed to fetch user data')
+        }
+        const { user } = await response.json()
+        console.log('user:', user)
+        setUser(user)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+      }
+    }
+
+    if (status === 'authenticated') {
+      fetchUserData()
+    }
+  }, [status])
+
+  // Fetch courses once user data is available
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        console.log('The user is', user.name)
+        const response = await axios.get('/api/getFakeRecommendations')
+        if (response && response.data) {
+          console.log('response.data:', response.data)
+          setMadeForYouCourses(response.data.recommendations) // Set courses data from the fake response
+        } else {
+          throw new Error('Failed to fetch courses')
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching courses:', error)
+        setError('Error fetching courses')
+        setLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchCourses() // Fetch recommendations once user data is available
+    }
+  }, [user]) // Only run this effect when user is set
+
+  if (loading) return <div>Loading Courses for {user?.userId}...</div>
+  if (error) return <div>{error}</div>
+
   return (
     <>
       <div className='md:hidden'>
@@ -33,7 +100,7 @@ export default function MusicPage() {
           width={1280}
           height={1114}
           alt='Music'
-          className='block dark:hidden'
+          className='w-full h-auto'
         />
         <Image
           src='/examples/music-dark.png'
@@ -78,7 +145,7 @@ export default function MusicPage() {
                             Watch Now
                           </h2>
                           <p className='text-sm text-muted-foreground'>
-                            Courses Based on Your Interests
+                            Courses Based on {user?.name}'s Interests
                           </p>
                         </div>
                       </div>
@@ -86,15 +153,24 @@ export default function MusicPage() {
                       <div className='relative'>
                         <ScrollArea>
                           <div className='flex space-x-4 pb-4'>
-                            {listenNowAlbums.map(album => (
-                              <AlbumArtwork
-                                key={album.name}
-                                album={album}
-                                className='w-[250px]'
-                                aspectRatio='portrait'
-                                width={250}
-                                height={250}
-                              />
+                            {madeForYouCourses.map(course => (
+                              <div
+                                key={course.course_id}
+                                className='w-[250px] p-4 border rounded-md'
+                              >
+                                <h3 className='text-lg font-bold'>
+                                  {course.course_title}
+                                </h3>
+                                <p className='text-sm text-muted-foreground'>
+                                  Organisation: {course.course_organisation}
+                                </p>
+                                <p className='text-sm'>
+                                  Difficulty: {course.course_difficulty}
+                                </p>
+                                <p className='text-sm'>
+                                  Rating: {course.course_rating}
+                                </p>
+                              </div>
                             ))}
                           </div>
                           <ScrollBar orientation='horizontal' />
