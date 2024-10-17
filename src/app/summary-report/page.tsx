@@ -24,6 +24,7 @@ interface SentimentData {
 export default function ReportDisplay() {
   const [reportData, setReportData] = useState<ReportData | null>(null);
   const [sentimentData, setSentimentData] = useState<SentimentData | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
@@ -40,6 +41,7 @@ export default function ReportDisplay() {
         const report_dict = parseReport(response.data['manager_report']['manager_report']);
         setReportData(report_dict);
         setSentimentData(response.data['sentiment_counts']);
+        setTotalCount(Number(response.data['total_count']));
       } catch (error) {
         console.error('Error fetching manager report:', error);
       } finally {
@@ -74,8 +76,8 @@ export default function ReportDisplay() {
   }
 
   const calculateSentimentPercentages = (sentimentCounts: { positive: number; negative: number; neutral: number }, total: number) => {
-    const positive = (sentimentCounts.positive / total) * 100;
-    const negative = (sentimentCounts.negative / total) * 100;
+    const positive = (sentimentCounts.positive / total) * 100
+    const negative = (sentimentCounts.negative / total) * 100
     return {
       positive: positive,
       negative: negative,
@@ -84,17 +86,15 @@ export default function ReportDisplay() {
   };
 
   const generateSentimentSummary = (percentages: { positive: number; negative: number; neutral: number }, topic: string) => {
-    const highestSentiment = Object.entries(percentages).reduce((a, b) => (a[1] > b[1] ? a : b))[0];
+    const highestSentiment = Object.entries(percentages).reduce((a, b) => a[1] > b[1] ? a : b)[0];
     return (
       <p className="mt-4 font-semibold">
         Most of your employees have{' '}
-        <span
-          className={`font-bold ${
-            highestSentiment === 'positive' ? 'text-green-600' :
-            highestSentiment === 'negative' ? 'text-red-600' :
-            'text-yellow-600'
-          }`}
-        >
+        <span className={`font-bold ${
+          highestSentiment === 'positive' ? 'text-green-600' :
+          highestSentiment === 'negative' ? 'text-red-600' :
+          'text-yellow-600'
+        }`}>
           {highestSentiment} sentiments
         </span>{' '}
         towards {topic} in the company.
@@ -103,9 +103,8 @@ export default function ReportDisplay() {
   };
 
   const renderSentimentAnalysis = () => {
-    if (!sentimentData) return null;
+    if (!sentimentData || totalCount === 0) return null;
 
-    const totalResponses = 100; // Assuming total responses are 100 for calculation
     const topics = ['overallWorkLifeBalance', 'teamWorkingRelationship', 'enjoymentOfWork'];
 
     return (
@@ -113,7 +112,7 @@ export default function ReportDisplay() {
         <h3 className="text-2xl font-bold mb-4">General Sentiment</h3>
         {topics.map((topic, index) => {
           const key = topic as keyof SentimentData;
-          const percentages = calculateSentimentPercentages(sentimentData[key], totalResponses);
+          const percentages = calculateSentimentPercentages(sentimentData[key], totalCount);
           const summary = generateSentimentSummary(percentages, topic.charAt(0).toUpperCase() + topic.replace(/([A-Z])/g, ' $1').trim().slice(1));
 
           return (

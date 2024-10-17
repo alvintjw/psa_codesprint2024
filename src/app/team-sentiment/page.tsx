@@ -289,6 +289,23 @@ const TeamSentiment = () => {
 
         <Card className='col-span-1'>
           <CardHeader>
+            <CardTitle>Improvement Suggestions</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className='flex flex-wrap gap-2'>
+              {(sentimentData.SuggestionsForAreasOfImprovement || []).map(
+                (suggestion, index) => (
+                  <Badge key={index} variant='secondary'>
+                    {suggestion}
+                  </Badge>
+                )
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className='col-span-2'>
+          <CardHeader>
             <CardTitle>Training Preferences</CardTitle>
           </CardHeader>
           <CardContent>
@@ -333,22 +350,7 @@ const TeamSentiment = () => {
           </CardContent>
         </Card>
 
-        <Card className='col-span-2'>
-          <CardHeader>
-            <CardTitle>Improvement Suggestions</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className='flex flex-wrap gap-2'>
-              {(sentimentData.SuggestionsForAreasOfImprovement || []).map(
-                (suggestion, index) => (
-                  <Badge key={index} variant='secondary'>
-                    {suggestion}
-                  </Badge>
-                )
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      
       </div>
     </div>
   )
