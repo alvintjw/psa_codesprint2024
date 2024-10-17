@@ -94,7 +94,8 @@ async def get_feedback_summary(request: FeedbackRequest):
 
     return {
         "manager_report": manager_report,
-        "sentiment_counts": sentiment_counts
+        "sentiment_counts": sentiment_counts,
+        "total_count": len(feedback_list)
     }
 
 
