@@ -15,7 +15,7 @@ class RecommendationRequest(BaseModel):
 def read_root():
     return {"message": "Hello World!"}
 
-@app.get("/recommendations/{keywords}")
+@app.post("/recommendations/{keywords}")
 def get_recommendations(keywords: str):
     recommendations = model.recommend(keywords)
     formatted_recommendations = []

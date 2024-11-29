@@ -43,7 +43,6 @@ export default function CoursePage() {
   const [madeForYouCourses, setMadeForYouCourses] = useState<Course[]>([])
   const [listenNowCourses, setListenNowCourses] = useState<Course[]>([])
 
-  const userId = 'cm25orh2w00002ds4tilm02w6'
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -105,9 +104,7 @@ export default function CoursePage() {
     return (
       <div className='flex flex-col justify-center items-center h-64'>
         <Loader2 className='h-8 w-8 animate-spin text-primary' />
-        <p className='mt-4 text-muted-foreground'>
-          Getting recommendations...
-        </p>
+        <p className='mt-4 text-muted-foreground'>Getting recommendations...</p>
       </div>
     )
   if (error) return <div>{error}</div>
